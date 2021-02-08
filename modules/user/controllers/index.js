@@ -1,10 +1,15 @@
 const userMethods = require('../methods')
 
 module.exports.signup = async (req, res) => {
-  const newUser = req.user
+  // console.log('signup: ', req.body)
+  const newUser = req.body
   try {
-    const response = await userMethods.signup(newUser)
-    return res.status(200).send(response)
+    if (newUser.password === newUser.passwordMatch) {
+      const response = await userMethods.signup(newUser)
+      return res.status(200).send(response)
+    } else {
+      return res.status(400).send('ERROR: Passwords do not match.')
+    }
   } catch (error) {
     console.error('SIGNUP ERROR: ', error)
     return res.status(500).send(error)
@@ -12,12 +17,37 @@ module.exports.signup = async (req, res) => {
 }
 
 module.exports.login = async (req, res) => {
-  const credentials = req.credentials
+  // console.log('login: ', req.body)
+  const credentials = req.body
   try {
     const response = await userMethods.login(credentials)
     return res.status(200).send(response)
   } catch (error) {
     console.error('LOGIN ERROR: ', error)
+    return res.status(500).send(error)
+  }
+}
+
+module.exports.refresh = async (req, res) => {
+  // console.log('refresh: ', req.body)
+  const { refreshToken } = req.body
+  try {
+    const response = await userMethods.refresh(refreshToken)
+    return res.status(200).send(response)
+  } catch (error) {
+    console.error('REFRESH ERROR: ', error)
+    return res.status(500).send(error)
+  }
+}
+
+module.exports.getUser = async (req, res) => {
+  // console.log('getUser: ', req.user)
+  const user = req.user
+  try {
+    const response = await userMethods.getUser(user)
+    return res.status(200).send(response)
+  } catch (error) {
+    console.error('GET ERROR: ', error)
     return res.status(500).send(error)
   }
 }

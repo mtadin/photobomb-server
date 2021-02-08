@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
+const jwt = require('express-jwt')
 const fs = require('fs')
 const path = require('path')
 
@@ -10,6 +11,15 @@ function initGlobals () {
 }
 
 function initMiddleware (app) {
+  app.use(
+    jwt({
+      secret: 'dummy',
+      algorithms: ['sha1', 'RS256', 'HS256']
+    }).unless({
+      path: ['/api/user/login', '/api/user/refresh', '/api/user/checkUsername', '/api/user/signup']
+    })
+  )
+
   app.use(
     bodyParser.urlencoded({
       extended: true,
@@ -36,7 +46,6 @@ function initMiddleware (app) {
 
 function registerRoutes (app) {
   const moduleDir = global.rootPath + '/modules'
-
   const noRoutesModules = []
   fs.readdirSync(moduleDir).forEach(file => {
     const path = moduleDir + '/' + file + '/routes'
@@ -59,6 +68,13 @@ function registerRoutes (app) {
   })
 }
 
+function setHeaders (app) {
+  app.get('/', (req, res) => {
+    req.header('Access-Control-Allow-Origin', '*')
+    req.header('Access-Control-Request-Method', '*')
+  })
+}
+
 module.exports = function (db) {
   const app = express()
 
@@ -67,5 +83,8 @@ module.exports = function (db) {
   initMiddleware(app)
 
   registerRoutes(app)
+
+  setHeaders(app)
+
   return app
 }
