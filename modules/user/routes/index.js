@@ -9,7 +9,7 @@ module.exports = function (app) {
 
   app.get('/api/user', userController.getUser)
 
-  // app.post('/api/user/logout', userController.logout)
+  app.post('/api/user/logout', userController.logout)
 
   app.post('/api/user/checkUsername', userController.checkUsername)
 }

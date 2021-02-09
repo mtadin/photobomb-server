@@ -28,6 +28,16 @@ module.exports.login = async (req, res) => {
   }
 }
 
+module.exports.logout = async (_req, res) => {
+  try {
+    const response = await userMethods.logout()
+    return res.status(200).send(response)
+  } catch (error) {
+    console.error('LOGOUT ERROR: ', error)
+    return res.status(500).send(error)
+  }
+}
+
 module.exports.refresh = async (req, res) => {
   // console.log('refresh: ', req.body)
   const { refreshToken } = req.body
@@ -53,7 +63,8 @@ module.exports.getUser = async (req, res) => {
 }
 
 module.exports.checkUsername = async (req, res) => {
-  const username = req.username
+  // console.log('req: ', req.body.usernameToCheck)
+  const username = req.body.usernameToCheck
   try {
     const response = await userMethods.checkUsername(username)
     return res.status(200).send(response)

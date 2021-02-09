@@ -70,8 +70,8 @@ function registerRoutes (app) {
 
 function setHeaders (app) {
   app.get('/', (req, res) => {
-    req.header('Access-Control-Allow-Origin', '*')
-    req.header('Access-Control-Request-Method', '*')
+    req.header('Access-Control-Allow-Origin', 'http://localhost:8080')
+    req.header('Access-Control-Request-Method', 'http://localhost:8080')
   })
 }
 
