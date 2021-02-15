@@ -29,8 +29,7 @@ const PostSchema = new Schema(
     },
     tag: {
       type: String,
-      enum: ['untagged', 'nature', 'animal', 'portrait', 'art', 'architecture'],
-      default: ['untagged']
+      enum: ['nature', 'animal', 'portrait', 'art', 'architecture', 'landscape']
     }
     // comments: {
     //   type: String,
