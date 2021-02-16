@@ -30,18 +30,17 @@ const PostSchema = new Schema(
     tag: {
       type: String,
       enum: ['nature', 'animal', 'portrait', 'art', 'architecture', 'landscape']
+    },
+    comments: {
+      type: String,
+      ref: 'Comments'
+    },
+    likes: {
+      type: String,
+      ref: 'Likes'
     }
-    // comments: {
-    //   type: String,
-    //   ref: 'Comments'
-    // },
-    // likes: {
-    //   type: String,
-    //   ref: 'Comments'
-    // }
   },
   schemaOptions
-
 )
 
 const Post = mongoose.model('Post', PostSchema)

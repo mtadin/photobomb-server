@@ -27,13 +27,13 @@ module.exports.uploadImage = async (req, res) => {
   }
 }
 
-module.exports.getPost = async (req, res) => {
+module.exports.getPostById = async (req, res) => {
   const id = req.params.id
   try {
-    const response = await postMethods.getPost(id)
+    const response = await postMethods.getPostById(id)
     return res.status(200).send(response)
   } catch (error) {
-    console.error('GET POST ERROR: ', error)
+    console.error('GET POST BY ID ERROR: ', error)
     return res.status(500).send(error)
   }
 }
@@ -54,7 +54,7 @@ module.exports.getPostsByUserId = async (req, res) => {
     const response = await postMethods.getPostsByUserId(userId)
     return res.status(200).send(response)
   } catch (error) {
-    console.error('GET POSTS ERROR: ', error)
+    console.error('GET POSTS BY USER ID ERROR: ', error)
     return res.status(500).send(error)
   }
 }
@@ -65,6 +65,52 @@ module.exports.getPostTags = async (req, res) => {
     return res.status(200).send(response)
   } catch (error) {
     console.error('GET TAGS ERROR: ', error)
+    return res.status(500).send(error)
+  }
+}
+
+module.exports.likePost = async (req, res) => {
+  const postId = req.params.id
+  const userId = req.body.id
+  try {
+    const response = await postMethods.likePost(postId, userId)
+    return res.status(200).send(response)
+  } catch (error) {
+    console.error('LIKE ERROR: ', error)
+    return res.status(500).send(error)
+  }
+}
+
+module.exports.commentPost = async (req, res) => {
+  const postId = req.params.id
+  const comment = req.body.id
+  try {
+    const response = await postMethods.commentPost(postId, comment)
+    return res.status(200).send(response)
+  } catch (error) {
+    console.error('COMMENT ERROR: ', error)
+    return res.status(500).send(error)
+  }
+}
+
+module.exports.getLikes = async (req, res) => {
+  const postId = req.params.id
+  try {
+    const response = await postMethods.getLikes(postId)
+    return res.status(200).send(response)
+  } catch (error) {
+    console.error('GET LIKES ERROR: ', error)
+    return res.status(500).send(error)
+  }
+}
+
+module.exports.getComments = async (req, res) => {
+  const postId = req.params.id
+  try {
+    const response = await postMethods.getComments(postId)
+    return res.status(200).send(response)
+  } catch (error) {
+    console.error('GET COMMENTS ERROR: ', error)
     return res.status(500).send(error)
   }
 }

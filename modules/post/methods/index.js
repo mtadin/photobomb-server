@@ -1,4 +1,6 @@
 const Post = require('../models/post')
+const Likes = require('../models/likes')
+const Comments = require('../models/comments')
 
 module.exports.createPost = async (post, creator) => {
   const newPost = new Post({
@@ -27,7 +29,7 @@ module.exports.uploadImage = async (image, postId) => {
   }
 }
 
-module.exports.getPost = async (id) => {
+module.exports.getPostById = async (id) => {
   try {
     const post = await Post.findOne({ _id: id })
     if (post) {
@@ -64,8 +66,54 @@ module.exports.getPostsByUserId = async (userId) => {
 
 module.exports.getPostTags = async () => {
   try {
+    console.log(Post.schema.paths)
     const tags = await Post.schema.path('tag').enumValues
     return tags
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+module.exports.likePost = async (postId, userId) => {
+  try {
+    // TODO find post, get likes if dont exist create, add id to likes, same for comments
+    Likes.findOneAndUpdate({ post: postId }, { $push: { likes: userId } }, { new: true, upsert: true })
+    return 'Post liked succesfully.'
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+module.exports.commentPost = async (postId, comment) => {
+  try {
+    Comments.findOneAndUpdate({ post: postId }, { $push: { comments: comment } }, { new: true, upsert: true })
+    return 'Left a comment succesfully.'
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+module.exports.getLikes = async (postId) => {
+  try {
+    const likes = await Likes.find({ post: postId })
+    if (likes) {
+      return likes
+    } else {
+      return 'Likes not found.'
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+module.exports.getComments = async (postId) => {
+  try {
+    const comments = await Comments.find({ post: postId })
+    if (comments) {
+      return Comments
+    } else {
+      return 'Comments not found.'
+    }
   } catch (error) {
     console.error(error)
   }
