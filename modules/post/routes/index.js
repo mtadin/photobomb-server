@@ -7,8 +7,6 @@ module.exports = function (app) {
 
   app.post('/api/post/create/:id', upload.single('blob'), postController.uploadImage)
 
-  app.get('/api/post/:id', postController.getPostById)
-
   app.get('/api/posts', postController.getAllPosts)
 
   app.get('/api/posts/:id', postController.getPostsByUserId)
@@ -22,4 +20,6 @@ module.exports = function (app) {
   app.get('/api/post/:id/likes', postController.getLikes)
 
   app.get('/api/post/:id/comments', postController.getComments)
+
+  app.get('/api/post/:id', postController.getPostById)
 }

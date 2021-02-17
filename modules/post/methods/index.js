@@ -7,12 +7,21 @@ module.exports.createPost = async (post, creator) => {
     creator: creator,
     title: post.title,
     tag: post.tag
-    // img: post.img
-    // comments: post.comments,
-    // likes: post.likes
   })
+
   try {
     await newPost.save()
+    const likes = new Likes({
+      post: newPost._id,
+      likes: []
+    })
+    const comments = new Comments({
+      post: newPost._id,
+      comments: []
+    })
+    await likes.save()
+    await comments.save()
+    await Post.updateOne({ _id: newPost._id }, { likes: likes._id, comments: comments._id })
     return newPost
   } catch (error) {
     console.error(error)
@@ -29,22 +38,12 @@ module.exports.uploadImage = async (image, postId) => {
   }
 }
 
-module.exports.getPostById = async (id) => {
-  try {
-    const post = await Post.findOne({ _id: id }).populate('likes')
-    if (post) {
-      return post
-    } else {
-      return 'Post not found.'
-    }
-  } catch (error) {
-    console.error(error)
-  }
-}
-
 module.exports.getAllPosts = async () => {
   try {
-    const posts = await Post.find().populate('likes')
+    const posts = await Post.find().populate({
+      path: 'likes',
+      match: { likes: { $ne: null } }
+    })
     return posts
   } catch (error) {
     console.error(error)
@@ -119,6 +118,19 @@ module.exports.getComments = async (postId) => {
       return comments
     } else {
       return 'Comments not found.'
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+module.exports.getPostById = async (id) => {
+  try {
+    const post = await Post.findOne({ _id: id }).populate('likes')
+    if (post) {
+      return post
+    } else {
+      return 'Post not found.'
     }
   } catch (error) {
     console.error(error)

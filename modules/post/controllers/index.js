@@ -1,7 +1,6 @@
 const postMethods = require('../methods')
 
 module.exports.createPost = async (req, res) => {
-  // console.log('req.user: ', req.user)
   console.log('req.body: ', req.body)
   const post = req.body
   const creator = req.user.user
@@ -23,17 +22,6 @@ module.exports.uploadImage = async (req, res) => {
     return res.status(200).send(response)
   } catch (error) {
     console.error('UPLOAD IMAGE ERROR: ', error)
-    return res.status(500).send(error)
-  }
-}
-
-module.exports.getPostById = async (req, res) => {
-  const id = req.params.id
-  try {
-    const response = await postMethods.getPostById(id)
-    return res.status(200).send(response)
-  } catch (error) {
-    console.error('GET POST BY ID ERROR: ', error)
     return res.status(500).send(error)
   }
 }
@@ -112,6 +100,17 @@ module.exports.getComments = async (req, res) => {
     return res.status(200).send(response)
   } catch (error) {
     console.error('GET COMMENTS ERROR: ', error)
+    return res.status(500).send(error)
+  }
+}
+
+module.exports.getPostById = async (req, res) => {
+  const id = req.params.id
+  try {
+    const response = await postMethods.getPostById(id)
+    return res.status(200).send(response)
+  } catch (error) {
+    console.error('GET POST BY ID ERROR: ', error)
     return res.status(500).send(error)
   }
 }
