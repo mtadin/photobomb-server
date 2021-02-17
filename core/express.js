@@ -16,7 +16,7 @@ function initMiddleware (app) {
       secret: 'dummy',
       algorithms: ['sha1', 'RS256', 'HS256']
     }).unless({
-      path: ['/api/auth/login', '/api/user/checkUsername', '/api/user/signup']
+      path: ['/api/auth/login', '/api/user/checkUsername', '/api/user/signup', '/api/posts']
     })
   )
 

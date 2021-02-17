@@ -25,6 +25,9 @@ const CommentsSchema = new Schema(
         type: String,
         ref: 'User'
       },
+      username: {
+        type: String
+      },
       comment: {
         type: String
       }

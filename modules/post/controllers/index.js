@@ -83,7 +83,8 @@ module.exports.likePost = async (req, res) => {
 
 module.exports.commentPost = async (req, res) => {
   const postId = req.params.id
-  const comment = req.body.id
+  const comment = req.body
+  console.log(postId, comment)
   try {
     const response = await postMethods.commentPost(postId, comment)
     return res.status(200).send(response)

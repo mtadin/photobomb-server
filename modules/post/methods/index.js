@@ -31,7 +31,7 @@ module.exports.uploadImage = async (image, postId) => {
 
 module.exports.getPostById = async (id) => {
   try {
-    const post = await Post.findOne({ _id: id })
+    const post = await Post.findOne({ _id: id }).populate('likes')
     if (post) {
       return post
     } else {
@@ -44,7 +44,7 @@ module.exports.getPostById = async (id) => {
 
 module.exports.getAllPosts = async () => {
   try {
-    const posts = await Post.find()
+    const posts = await Post.find().populate('likes')
     return posts
   } catch (error) {
     console.error(error)
@@ -53,7 +53,7 @@ module.exports.getAllPosts = async () => {
 
 module.exports.getPostsByUserId = async (userId) => {
   try {
-    const posts = await Post.find({ creator: userId })
+    const posts = await Post.find({ creator: userId }).populate('likes')
     if (posts) {
       return posts
     } else {
@@ -66,7 +66,6 @@ module.exports.getPostsByUserId = async (userId) => {
 
 module.exports.getPostTags = async () => {
   try {
-    console.log(Post.schema.paths)
     const tags = await Post.schema.path('tag').enumValues
     return tags
   } catch (error) {
@@ -76,9 +75,15 @@ module.exports.getPostTags = async () => {
 
 module.exports.likePost = async (postId, userId) => {
   try {
-    // TODO find post, get likes if dont exist create, add id to likes, same for comments
-    Likes.findOneAndUpdate({ post: postId }, { $push: { likes: userId } }, { new: true, upsert: true })
-    return 'Post liked succesfully.'
+    const likeExists = await Likes.findOne({ post: postId, likes: { $in: [userId] } })
+    if (likeExists) {
+      const likes = await Likes.findOneAndUpdate({ post: postId }, { $pull: { likes: userId } }, { new: true })
+      return likes
+    } else {
+      const likes = await Likes.findOneAndUpdate({ post: postId }, { $push: { likes: userId } }, { upsert: true, new: true, setDefaultsOnInsert: true })
+      await Post.findOneAndUpdate({ _id: postId }, { likes: likes._id })
+      return likes
+    }
   } catch (error) {
     console.error(error)
   }
@@ -86,8 +91,9 @@ module.exports.likePost = async (postId, userId) => {
 
 module.exports.commentPost = async (postId, comment) => {
   try {
-    Comments.findOneAndUpdate({ post: postId }, { $push: { comments: comment } }, { new: true, upsert: true })
-    return 'Left a comment succesfully.'
+    const comments = await Comments.findOneAndUpdate({ post: postId }, { $push: { comments: comment } }, { upsert: true, new: true, setDefaultsOnInsert: true })
+    await Post.findOneAndUpdate({ _id: postId }, { comments: comments._id })
+    return 'Comment left succesfully.'
   } catch (error) {
     console.error(error)
   }
@@ -108,9 +114,9 @@ module.exports.getLikes = async (postId) => {
 
 module.exports.getComments = async (postId) => {
   try {
-    const comments = await Comments.find({ post: postId })
+    const comments = await Comments.findOne({ post: postId })
     if (comments) {
-      return Comments
+      return comments
     } else {
       return 'Comments not found.'
     }
